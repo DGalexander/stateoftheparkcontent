@@ -1,0 +1,379 @@
+---
+title: "Tourism Charts"
+author: "David Alexander"
+date: "03/01/2020"
+output: html_document
+---
+
+### Introduction
+This page contains the data and analysis of all the charts in the Tourism State of the Park paper. The data tables are printed out so the underlaying data can be seen. 
+
+This data is processed using the https://www.tidyverse.org/packages/ packages in R
+
+```{r setup, include=FALSE}
+## Set Wd 
+setwd("~/GitHub/stateoftheparkcontent")
+## Load tidyverse
+library(tidyverse)
+library(plotly)
+library(kableExtra)
+```
+
+### Figure 1: STEAM Volume of visits in Visitor Days and Visitor Numbers 2009-2018
+* **Data Source:** STEAM model Peak District and Influence Area https://www.globaltourismsolutions.co.uk/steam-model/
+
+* **Next Updated:** Autumn 2020
+
+```{r, message=FALSE}
+# Read the data
+fig1 <- read_csv("Tourism_Data/Figure_1.csv")
+# View the data
+as_tibble(fig1)
+```
+
+```{r}
+# plot a graph 
+fig1_p <- ggplot(data = fig1, aes(x=Year, y=Millions, fill=Visit_Type)) +
+  geom_bar(stat = "identity", position=position_dodge()) +
+  scale_fill_manual(values=c("#999999", "#8d395b")) +
+  xlab("Year") + ylab("Millions (000's)") +
+  ggtitle("Figure 1: STEAM Volume of visits in Visitor Days & Visitor Numbers 2009-2018") +
+  coord_cartesian(xlim =c(2009, 2018)) +
+  theme_minimal()
+
+# output a plot
+ggplotly(fig1_p) %>%
+  layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
+```
+
+#### Figure 2: STEAM Volume of visits in Visitor Days per month (Year 2018)
+* **Data Source:** STEAM model Peak District and Influence Area https://www.globaltourismsolutions.co.uk/steam-model/
+
+* **Next Updated:** Autumn 2020
+
+```{r, message=FALSE}
+# read data
+fig2 <- read_csv("Tourism_Data/Figure_2.csv")
+
+# order a factor for plotting
+fig2$Month <- factor(fig2$Month, levels = month.abb)
+
+# View the data
+as_tibble(fig2)
+```
+
+```{r}
+# plot a graph 
+fig2_p <- ggplot(data = fig2, aes(x=Month, y=Visitor_Days, group=1)) +
+  geom_line(colour = "#8d395b") +
+  xlab("Month 2018") + ylab("Visitor Days") +
+  ggtitle("Figure 2: STEAM Volume of visits in Visitor Days per month 2018") +
+  theme_minimal()
+
+# output a plot
+ggplotly(fig2_p)
+```
+
+#### Figure 3: STEAM Sectoral Distribution of Economic Impact; Tourist Expenditure (£Million 2009-2018 VAT indexed 2017)
+* **Data Source:** STEAM model Peak District and Influence Area https://www.globaltourismsolutions.co.uk/steam-model/
+
+* **Next Updated:** Autumn 2020
+
+| SECTOR               | 2009 | 2010 | 2011 | 2012 | 2013 | 2014 | 2015 | 2016 | 2017 | 2018 |
+|----------------------|------|------|------|------|------|------|------|------|------|------|
+| ACCOMMODATION        | £76  | £80  | £78  | £78  | £79  | £81  | £78  | £77  | £82  | 2017 |
+| FOOD & DRINK         | £94  | £92  | £93  | £91  | £90  | £93  | £94  | £94  | £100 | 2017 |
+| RECREATION           | £37  | £36  | £37  | £36  | £35  | £36  | £37  | £37  | £40  | 2017 |
+| SHOPPING             | £116 | £112 | £115 | £111 | £110 | £113 | £115 | £116 | £125 | 2017 |
+| TRANSPORT            | £51  | £50  | £50  | £49  | £49  | £50  | £50  | £51  | £54  | 2017 |
+| DIRECT REVENUE       | £373 | £370 | £373 | £365 | £364 | £373 | £374 | £374 | £400 | 2017 |
+| VAT                  | £56  | £65  | £75  | £73  | £73  | £75  | £75  | £75  | £80  | 2017 |
+| DIRECT EXPENDITURE   | £429 | £434 | £447 | £438 | £437 | £448 | £448 | £449 | £481 | 2017 |
+| INDIRECT EXPENDITURE | £146 | £147 | £151 | £148 | £147 | £151 | £151 | £152 | £163 | 2017 |
+| TOTAL                | £575 | £581 | £599 | £585 | £584 | £599 | £600 | £602 | £644 | 2017 |
+
+
+#### Figure 4: Economic Activity Visitor Survey 2015
+* **Data Source:** Peak District National Park Visitor Survey 2014/15
+
+* **Next Updated:** TBC 
+
+```{r, message=FALSE}
+# read data
+fig4 <- read_csv("Tourism_Data/Figure_4.csv")
+
+# View the data
+as_tibble(fig4)
+```
+
+```{r}
+colors <- c('rgb(141,57,91)', 'rgb(128,133,133)', 'rgb(144,103,167)', 'rgb(171,104,87)','rgb(114,147,203)','rgb(144,103,167)', 'rgb(171,104,87)', 'rgb(114,147,203)')
+
+fig4_p <- plot_ly(fig4, labels = ~Economic_Activity, values = ~Percentage, type = 'pie',
+        textposition = 'inside',
+        textinfo = 'label+percent',
+        insidetextfont = list(color = '#FFFFFF'),
+        hoverinfo = 'text',
+        text = ~paste(Economic_Activity, Percentage * 100,'%'),
+        marker = list(colors = colors,
+                      line = list(color = '#FFFFFF', width = 1)),
+                      #The 'pull' attribute can also be used to create space between the sectors
+        showlegend = FALSE) %>%
+  layout(title = 'Figure 4: Economic Activity Visitor Survey 2015',
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+# output a plot
+ggplotly(fig4_p)
+```
+
+#### Figure 5: Group Size Visitor Survey 2015 
+* **Data Source:** Peak District National Park Visitor Survey 2014/15
+
+* **Next Updated:** TBC 
+```{r, message=FALSE}
+# Read the data
+fig5 <- read_csv("Tourism_Data/Figure_5.csv")
+# View the data
+as_tibble(fig5)
+```
+
+```{r}
+# plot a graph 
+fig5_p <- plot_ly(fig5, x = ~Group_Size, y = ~Percentage, type = 'bar', color = I("#8d395b")) %>%
+  layout(title = "Figure 5: Group Size Visitor Survey 2015 ",
+         xaxis = list(title = "Group Size"),
+         yaxis = list(title = "Percentage"))
+
+# output a plot
+fig5_p
+```
+
+#### Figure 6: Visitor Origin by Region
+* **Data Source:** Peak District National Park Visitor Survey 2014/15
+* **Data Source:** http://geoportal.statistics.gov.uk/datasets/4fcca2a47fed4bfaa1793015a18537ac_4
+
+* **Next Updated:** TBC
+```{r, message=FALSE}
+# Load the extra libraries for maping 
+library("GISTools")
+RegionSP <- readShapePoly("~/GitHub/stateoftheparkcontent/Tourism_Data/SP/Regions_December_2017_Ultra_Generalised_Clipped_Boundaries_in_England.shp")
+# Read the data
+fig6 <- read_csv("Tourism_Data/Figure_6.csv")
+# View the data
+##################as_tibble(fig6)
+```
+
+```{r, message=FALSE}
+# Load the extra Libraries
+library(cartogram)
+library(tmap)
+#library(broom)
+# Merge the data to the SP boundary
+RegionSP <- merge(RegionSP, fig6, by.x="rgn17nm", by.y="Region")
+
+#Create Cartogram & Choropleth
+fig6_p <- cartogram(RegionSP, "Percentage", itermax=7)
+
+tm_shape(fig6_p) + tm_polygons("Percentage", style = "jenks", palette = "PuRd") +
+  tm_layout(frame = FALSE, legend.position = c("left", "top"))
+
+```
+
+
+#### Figure 7: Knowledge about the Peak District 
+* **Data Source:** Peak District National Park Non Visitor Survey 2014/15
+
+* **Next Updated:** TBC 
+```{r, message=FALSE}
+# Read the data
+fig7 <- read_csv("Tourism_Data/Figure_7.csv")
+# View the data
+as_tibble(fig7)
+```
+
+```{r}
+# plot a graph 
+fig7_p <- plot_ly(fig7, x = ~Knowledge, y = ~Percentage, type = 'bar', color = I("#8d395b")) %>%
+  layout(title = "Figure 7: Knowledge about the Peak District",
+         xaxis = list(title = "Knowledge about the Park", tickangle = -0),
+         yaxis = list(title = "Percentage"))
+
+# output a plot
+fig7_p
+```
+
+#### Figure 8: Likelihood to visit the National Park in the future
+* **Data Source:** Peak District National Park Visitor Survey 2014/15
+
+* **Next Updated:** TBC 
+```{r, message=FALSE}
+# Read the data
+fig8 <- read_csv("Tourism_Data/Figure_8.csv")
+# View the data
+as_tibble(fig8)
+```
+
+```{r}
+# plot a graph 
+fig8_p <- plot_ly(fig8, x = ~Likelihood, y = ~Percentage, type = 'bar', color = I("#8d395b")) %>%
+  layout(title = "Figure 8: Likelihood to visit the National Park in the future",
+         xaxis = list(title = "Likelihood to visit the Park"),
+         yaxis = list(title = "Percentage"))
+
+# output a plot
+fig8_p
+```
+
+#### Figure 9: ACORN Results: Proportion of postcodes per ACORN Category 
+* **Data Source:** Peak District National Park Non / Visitor Survey 2014/15
+* **Data Source:** https://acorn.caci.co.uk/
+
+* **Next Updated:** TBC 
+
+```{r, message=FALSE}
+# Read the data
+fig9 <- read_csv("Tourism_Data/Figure_9.csv")
+# View the data
+as_tibble(fig9)
+```
+```{r}
+kable(fig9) %>%
+  kable_styling(bootstrap_options = "striped", "condensed", full_width = F)
+```
+
+#### Figure 10: Figure 10: Monthly Visitor Centre Contacts 2018
+* **Data Source:** Peak District National Park Authority
+
+* **Next Updated:** Autumn 2020
+```{r, message=FALSE}
+# read data
+fig10 <- read_csv("Tourism_Data/Figure_10.csv")
+
+# order a factor for plotting
+fig10$Month <- factor(fig10$Month, levels = month.abb)
+
+# View the data
+as_tibble(fig10)
+```
+
+```{r}
+# plot a graph 
+fig10_p <- ggplot(data = fig10, aes(x=Month, y=Contacts, group=1)) +
+  geom_line(colour = "#8d395b") +
+  xlab("Month") + ylab("Number of Contacts") +
+  ggtitle("Figure 10: Figure 10: Monthly Visitor Centre Contacts 2018") +
+  theme_minimal()
+
+# output a plot
+ggplotly(fig10_p)
+```
+
+#### Figure 11: Average 2000-2018 of all Contacts at TICs
+* **Data Source:** STEAM model Peak District and Influence Area https://www.globaltourismsolutions.co.uk/steam-model/
+
+* **Next Updated:** Autumn 2020
+```{r, message=FALSE}
+# Read the data
+fig11 <- read_csv("Tourism_Data/Figure_11.csv")
+# View the data
+as_tibble(fig11)
+```
+
+```{r}
+kable(fig11) %>%
+  kable_styling(bootstrap_options = "striped", "condensed", full_width = F)
+```
+
+#### Figure 12: Cyclists & Walkers 2 way counts Hassop Station Monsal Trail 2017
+* **Data Source:** Peak District National Park Authority
+
+* **Next Updated:** Autumn 2020
+```{r, message=FALSE}
+# read data
+fig12 <- read_csv("Tourism_Data/Figure_12.csv")
+
+# order a factor for plotting
+fig12$Month <- factor(fig12$Month, levels = month.abb)
+
+# View the data
+as_tibble(fig12)
+```
+
+```{r}
+# plot a graph 
+fig12_p <- ggplot(data = fig12, aes(x=Month, y=Count, group=Mode)) +
+  geom_line(colour = "#8d395b") +
+  xlab("Month") + ylab("Number") +
+  ggtitle("Figure 12: Cyclists & Walkers 2 way counts Hassop Station Monsal Trail 2017") +
+  theme_minimal()
+
+# output a plot
+ggplotly(fig12_p)
+```
+
+
+#### Figure 13: Serviced Accommodation 2017 STEAM Bed Spaces
+* **Data Source:** STEAM model Peak District and Influence Area https://www.globaltourismsolutions.co.uk/steam-model/
+
+* **Next Updated:** Autumn 2020
+```{r, message=FALSE}
+# Read the data
+fig13 <- read_csv("Tourism_Data/Figure_13.csv")
+# View the data
+as_tibble(fig13)
+```
+
+```{r}
+kable(fig13) %>%
+  kable_styling(bootstrap_options = "striped", "condensed", full_width = F)
+```
+
+
+#### Figure 14: Non-Serviced Accommodation 2017
+* **Data Source:** STEAM model Peak District and Influence Area https://www.globaltourismsolutions.co.uk/steam-model/
+
+* **Next Updated:** Autumn 2020
+```{r, message=FALSE}
+# Read the data
+fig14 <- read_csv("Tourism_Data/Figure_14.csv")
+# View the data
+as_tibble(fig14)
+```
+
+```{r}
+kable(fig14) %>%
+  kable_styling(bootstrap_options = "striped", "condensed", full_width = F)
+```
+
+#### Figure 15: Seasonal Availability of bed supply STEAM 2018
+* **Data Source:** STEAM model Peak District and Influence Area https://www.globaltourismsolutions.co.uk/steam-model/
+
+* **Next Updated:** Autumn 2020
+```{r, message=FALSE}
+# Read the data
+fig15 <- read_csv("Tourism_Data/Figure_15.csv")
+# View the data
+as_tibble(fig15)
+```
+
+```{r}
+# plot a graph 
+fig15_p <- ggplot(data = fig15, aes(x=Month, y=Count, fill=Type)) +
+  geom_bar(stat = "identity", position="stack") +
+  scale_fill_manual(values=c("#999999", "#8d395b")) +
+  xlab("Month") + ylab("Bed Supply") +
+  ggtitle("Figure 15: Seasonal Availability of bed supply STEAM 2018") +
+  theme_minimal()
+
+# output a plot
+ggplotly(fig15_p) %>%
+  layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
+```
+
+
+
+
+
+
+
