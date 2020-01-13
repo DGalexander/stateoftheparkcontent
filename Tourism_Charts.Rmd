@@ -17,6 +17,7 @@ setwd("~/GitHub/stateoftheparkcontent")
 library(tidyverse)
 library(plotly)
 library(kableExtra)
+library(htmlwidgets)
 ```
 
 ### Figure 1: STEAM Volume of visits in Visitor Days and Visitor Numbers 2009-2018
@@ -37,13 +38,17 @@ fig1_p <- ggplot(data = fig1, aes(x=Year, y=Millions, fill=Visit_Type)) +
   geom_bar(stat = "identity", position=position_dodge()) +
   scale_fill_manual(values=c("#999999", "#8d395b")) +
   xlab("Year") + ylab("Millions (000's)") +
-  ggtitle("Figure 1: STEAM Volume of visits in Visitor Days & Visitor Numbers 2009-2018") +
+  ggtitle("Figure 1: STEAM Volume in Visitor Days & Visitor Numbers 2009-2018") +
   coord_cartesian(xlim =c(2009, 2018)) +
   theme_minimal()
 
 # output a plot
-ggplotly(fig1_p) %>%
+fig1_p <- ggplotly(fig1_p) %>%
   layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
+
+fig1_p
+# Save Widgets
+saveWidget(widget = fig1_p, file = 'TOURISM_fig1_p.html')
 ```
 
 #### Figure 2: STEAM Volume of visits in Visitor Days per month (Year 2018)
@@ -71,7 +76,10 @@ fig2_p <- ggplot(data = fig2, aes(x=Month, y=Visitor_Days, group=1)) +
   theme_minimal()
 
 # output a plot
-ggplotly(fig2_p)
+fig2_p <- ggplotly(fig2_p)
+fig2_p
+# Save Widgets
+saveWidget(widget = fig2_p, file = 'TOURISM_fig2_p.html')
 ```
 
 #### Figure 3: STEAM Sectoral Distribution of Economic Impact; Tourist Expenditure (£Million 2009-2018 VAT indexed 2017)
@@ -79,18 +87,18 @@ ggplotly(fig2_p)
 
 * **Next Updated:** Autumn 2020
 
-| SECTOR               | 2009 | 2010 | 2011 | 2012 | 2013 | 2014 | 2015 | 2016 | 2017 | 2018 |
-|----------------------|------|------|------|------|------|------|------|------|------|------|
-| ACCOMMODATION        | £76  | £80  | £78  | £78  | £79  | £81  | £78  | £77  | £82  | 2017 |
-| FOOD & DRINK         | £94  | £92  | £93  | £91  | £90  | £93  | £94  | £94  | £100 | 2017 |
-| RECREATION           | £37  | £36  | £37  | £36  | £35  | £36  | £37  | £37  | £40  | 2017 |
-| SHOPPING             | £116 | £112 | £115 | £111 | £110 | £113 | £115 | £116 | £125 | 2017 |
-| TRANSPORT            | £51  | £50  | £50  | £49  | £49  | £50  | £50  | £51  | £54  | 2017 |
-| DIRECT REVENUE       | £373 | £370 | £373 | £365 | £364 | £373 | £374 | £374 | £400 | 2017 |
-| VAT                  | £56  | £65  | £75  | £73  | £73  | £75  | £75  | £75  | £80  | 2017 |
-| DIRECT EXPENDITURE   | £429 | £434 | £447 | £438 | £437 | £448 | £448 | £449 | £481 | 2017 |
-| INDIRECT EXPENDITURE | £146 | £147 | £151 | £148 | £147 | £151 | £151 | £152 | £163 | 2017 |
-| TOTAL                | £575 | £581 | £599 | £585 | £584 | £599 | £600 | £602 | £644 | 2017 |
+| SECTOR / YEAR        | 2009   | 2010   | 2011   | 2012   | 2013   | 2014   | 2015   | 2016   | 2017   | 2018   |
+|----------------------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
+| Accommodation        | 59.82  | 65.43  | 66.89  | 69.90  | 73.58  | 77.04  | 74.55  | 74.87  | 81.68  | 84.74  |
+| Food & Drink         | 74.05  | 75.24  | 80.32  | 81.24  | 83.43  | 88.18  | 90.04  | 91.70  | 100.44 | 106.06 |
+| Recreation           | 29.30  | 29.68  | 31.74  | 31.96  | 32.78  | 34.58  | 35.40  | 36.06  | 39.54  | 41.75  |
+| Shopping             | 91.94  | 92.20  | 99.02  | 99.88  | 102.25 | 107.82 | 110.76 | 112.99 | 124.63 | 131.33 |
+| Transport            | 40.15  | 40.75  | 43.54  | 43.84  | 45.01  | 47.46  | 48.56  | 49.43  | 54.12  | 57.13  |
+| Direct Revenue       | 295.26 | 303.31 | 321.52 | 326.82 | 337.05 | 355.08 | 359.32 | 365.05 | 400.42 | 421.01 |
+| VAT                  | 44.29  | 53.08  | 64.30  | 65.36  | 67.41  | 71.02  | 71.86  | 73.01  | 80.08  | 84.20  |
+| Direct Expenditure   | 339.55 | 356.38 | 385.82 | 392.18 | 404.46 | 426.09 | 431.18 | 438.05 | 480.50 | 505.21 |
+| Indirect Expenditure | 115.45 | 120.35 | 130.42 | 132.60 | 136.16 | 143.69 | 145.73 | 148.32 | 163.19 | 171.66 |
+| TOTAL                | 455.00 | 476.74 | 516.25 | 524.78 | 540.62 | 569.79 | 576.91 | 586.37 | 643.69 | 676.87 |
 
 
 #### Figure 4: Economic Activity Visitor Survey 2015
@@ -124,7 +132,11 @@ fig4_p <- plot_ly(fig4, labels = ~Economic_Activity, values = ~Percentage, type 
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 
 # output a plot
-ggplotly(fig4_p)
+fig4_p <- ggplotly(fig4_p)
+fig4_p
+
+# Save Widgets
+saveWidget(widget = fig4_p, file = 'TOURISM_fig4_p.html')
 ```
 
 #### Figure 5: Group Size Visitor Survey 2015 
@@ -147,6 +159,9 @@ fig5_p <- plot_ly(fig5, x = ~Group_Size, y = ~Percentage, type = 'bar', color = 
 
 # output a plot
 fig5_p
+
+# Save Widgets
+saveWidget(widget = fig5_p, file = 'TOURISM_fig5_p.html')
 ```
 
 #### Figure 6: Visitor Origin by Region
@@ -175,8 +190,10 @@ RegionSP <- merge(RegionSP, fig6, by.x="rgn17nm", by.y="Region")
 #Create Cartogram & Choropleth
 fig6_p <- cartogram(RegionSP, "Percentage", itermax=7)
 
-tm_shape(fig6_p) + tm_polygons("Percentage", style = "jenks", palette = "PuRd") +
+fig6_p <- tm_shape(fig6_p) + tm_polygons("Percentage", style = "jenks", palette = "PuRd") +
   tm_layout(frame = FALSE, legend.position = c("left", "top"))
+
+fig6_p
 
 ```
 
@@ -201,6 +218,9 @@ fig7_p <- plot_ly(fig7, x = ~Knowledge, y = ~Percentage, type = 'bar', color = I
 
 # output a plot
 fig7_p
+
+# Save Widgets
+saveWidget(widget = fig7_p, file = 'TOURISM_fig7_p.html')
 ```
 
 #### Figure 8: Likelihood to visit the National Park in the future
@@ -223,6 +243,9 @@ fig8_p <- plot_ly(fig8, x = ~Likelihood, y = ~Percentage, type = 'bar', color = 
 
 # output a plot
 fig8_p
+
+# Save Widgets
+saveWidget(widget = fig8_p, file = 'TOURISM_fig8_p.html')
 ```
 
 #### Figure 9: ACORN Results: Proportion of postcodes per ACORN Category 
@@ -239,7 +262,8 @@ as_tibble(fig9)
 ```
 ```{r}
 kable(fig9) %>%
-  kable_styling(bootstrap_options = "striped", "condensed", full_width = F)
+  kable_styling(bootstrap_options = "striped", "condensed", full_width = F) %>%
+  save_kable(file = "TOURISM_fig9_p.html", self_contained = T)
 ```
 
 #### Figure 10: Figure 10: Monthly Visitor Centre Contacts 2018
@@ -266,7 +290,11 @@ fig10_p <- ggplot(data = fig10, aes(x=Month, y=Contacts, group=1)) +
   theme_minimal()
 
 # output a plot
-ggplotly(fig10_p)
+fig10_p <- ggplotly(fig10_p)
+fig10_p
+
+# Save Widgets
+saveWidget(widget = fig10_p, file = 'TOURISM_fig10_p.html')
 ```
 
 #### Figure 11: Average 2000-2018 of all Contacts at TICs
@@ -282,7 +310,8 @@ as_tibble(fig11)
 
 ```{r}
 kable(fig11) %>%
-  kable_styling(bootstrap_options = "striped", "condensed", full_width = F)
+  kable_styling(bootstrap_options = "striped", "condensed", full_width = F) %>%
+  save_kable(file = "TOURISM_fig11_p.html", self_contained = T)
 ```
 
 #### Figure 12: Cyclists & Walkers 2 way counts Hassop Station Monsal Trail 2017
@@ -309,7 +338,11 @@ fig12_p <- ggplot(data = fig12, aes(x=Month, y=Count, group=Mode)) +
   theme_minimal()
 
 # output a plot
-ggplotly(fig12_p)
+fig12_p <- ggplotly(fig12_p)
+fig12_p
+
+# Save Widgets
+saveWidget(widget = fig12_p, file = 'TOURISM_fig12_p.html')
 ```
 
 
@@ -326,7 +359,8 @@ as_tibble(fig13)
 
 ```{r}
 kable(fig13) %>%
-  kable_styling(bootstrap_options = "striped", "condensed", full_width = F)
+  kable_styling(bootstrap_options = "striped", "condensed", full_width = F) %>%
+  save_kable(file = "TOURSIM_fig13_p.html", self_contained = T)
 ```
 
 
@@ -343,7 +377,8 @@ as_tibble(fig14)
 
 ```{r}
 kable(fig14) %>%
-  kable_styling(bootstrap_options = "striped", "condensed", full_width = F)
+  kable_styling(bootstrap_options = "striped", "condensed", full_width = F) %>%
+  save_kable(file = "fig14_p.html", self_contained = T)
 ```
 
 #### Figure 15: Seasonal Availability of bed supply STEAM 2018
@@ -353,6 +388,8 @@ kable(fig14) %>%
 ```{r, message=FALSE}
 # Read the data
 fig15 <- read_csv("Tourism_Data/Figure_15.csv")
+# order a factor for plotting
+fig15$Month <- factor(fig15$Month, levels = month.abb)
 # View the data
 as_tibble(fig15)
 ```
@@ -367,8 +404,12 @@ fig15_p <- ggplot(data = fig15, aes(x=Month, y=Count, fill=Type)) +
   theme_minimal()
 
 # output a plot
-ggplotly(fig15_p) %>%
+fig15_p <- ggplotly(fig15_p) %>%
   layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
+fig15_p
+
+# Save Widgets
+saveWidget(widget = fig15_p, file = 'TOURISM_fig15_p.html')
 ```
 
 
